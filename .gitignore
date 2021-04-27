@@ -1,0 +1,10 @@
+bin
+target
+tmp
+conf
+conf-*
+config
+html
+.settings
+.classpath
+.project
