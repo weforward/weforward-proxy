@@ -3,7 +3,7 @@
 
 	<groupId>cn.weforward</groupId>
 	<artifactId>webforward-proxy</artifactId>
-	<version>1.1.1.535917</version>
+	<version>1.1.1.536051</version>
 	<packaging>jar</packaging>
 
 	<name>weforward-proxy</name>
