@@ -286,7 +286,7 @@ public class ContentType {
 		CONTENT_TYPE.put(".stl", "application/vnd.ms-pki.stl");
 		CONTENT_TYPE.put(".stm", "text/html");
 		CONTENT_TYPE.put(".sty", "application/x-sty");
-		CONTENT_TYPE.put(".svg", "text/xml");
+		CONTENT_TYPE.put(".svg", "image/svg+xml");
 		CONTENT_TYPE.put(".swf", "application/x-shockwave-flash");
 		CONTENT_TYPE.put(".tdf", "application/x-tdf");
 		CONTENT_TYPE.put(".tg4", "application/x-tg4");
