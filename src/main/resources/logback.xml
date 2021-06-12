@@ -9,7 +9,6 @@
 <!-- -->
 <!DOCTYPE configuration>
 <configuration>
-
 	<appender name="remote" class="cn.weforward.common.log.DelayRemoteAppender">
 		<url>${rlog.url}</url>
 		<projectName>${project_name}</projectName>
