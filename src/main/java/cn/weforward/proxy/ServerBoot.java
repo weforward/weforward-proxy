@@ -68,7 +68,7 @@ public class ServerBoot {
 	private static final String HOSTS = System.getenv("WEFORWARD_HOSTS");
 
 	/** hyconfig文件 */
-	private static Resource HYCONFIG;
+	private static Resource WFCONFIG;
 
 	/**
 	 * 主入口
@@ -189,8 +189,8 @@ public class ServerBoot {
 		return Arrays.asList(value.split(";"));
 	}
 
-	private static Resource getHyConfig() throws IOException {
-		if (null == HYCONFIG && !StringUtil.isEmpty(HOSTS)) {
+	private static Resource getWfConfig() throws IOException {
+		if (null == WFCONFIG && !StringUtil.isEmpty(HOSTS)) {
 			StringBuilder sb = new StringBuilder();
 			String[] arr = HOSTS.split(";");
 			if (arr.length == 1) {
@@ -207,10 +207,10 @@ public class ServerBoot {
 					sb.append("\"");
 				}
 			}
-			/** hyconfig文件模板 */
-			HYCONFIG = new StringResource("hyconfig.js", "window._WOOL_HY_CONFIG={\"hosts\":[" + sb.toString() + "]};");
+			/** wfconfig文件模板 */
+			WFCONFIG = new StringResource("wfconfig.js", "window._WEFORWARD_CONFIG={\"hosts\":[" + sb.toString() + "]};");
 		}
-		return HYCONFIG;
+		return WFCONFIG;
 	}
 
 	private static String getVersion() {
@@ -249,7 +249,7 @@ public class ServerBoot {
 		List<HostRoute> routes = createRoutes(val.optJSONArray("routes"), config);
 		if ("html".equalsIgnoreCase(type)) {
 			HtmlServer s = new HtmlServer(name, port);
-			s.addConfig(getHyConfig());
+			s.addConfig(getWfConfig());
 			s.setServerid(DEFAULT_SERVERID);
 			s.setNoCacheFiles(NO_CACHES_FILES);
 			s.setAntEnable(val.optBoolean("ant", false));
