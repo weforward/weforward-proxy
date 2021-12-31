@@ -54,8 +54,14 @@ public class ServerBoot {
 	private static final JSONObject DEFAULT_SERVER = new JSONObject(DEFAULT_SERVER_TEMPLATE);
 	/** 默认端口 */
 	private static final int DEFAULT_PORT = NumberUtil.toInt(System.getProperty("weforward.port"), 8080);
+	/** 默认管理端口 */
+	private static final int DEFAULT_MANAGE_PORT = NumberUtil.toInt(System.getProperty("weforward.port2"), 18080);
 	/** 默认服务id */
 	private static final String DEFAULT_SERVERID = System.getProperty("weforward.serverid", "x00ff");
+
+	private static final String SERVICE_ACCESSID = System.getProperty("weforward.service.accessId");
+	private static final String SERVICE_ACCESSKEY = System.getProperty("weforward.service.accessKey");
+
 	/** 不使用缓存的文件后缀 */
 	private static List<String> NO_CACHES_FILES = toList(System.getenv("WEFORWARD_NO_CACHES_FILES"), ".html");
 	/** 配置链接 */
@@ -208,7 +214,8 @@ public class ServerBoot {
 				}
 			}
 			/** wfconfig文件模板 */
-			WFCONFIG = new StringResource("wfconfig.js", "window._WEFORWARD_CONFIG={\"hosts\":[" + sb.toString() + "]};");
+			WFCONFIG = new StringResource("wfconfig.js",
+					"window._WEFORWARD_CONFIG={\"hosts\":[" + sb.toString() + "]};");
 		}
 		return WFCONFIG;
 	}
@@ -236,13 +243,18 @@ public class ServerBoot {
 			return;
 		}
 		int port = val.optInt("port", DEFAULT_PORT);
+		int managetPort = val.optInt("managePort", DEFAULT_MANAGE_PORT);
 		String type = val.optString("type");
 		if (StringUtil.isEmpty(type)) {
 			type = "html";
 		}
 		String name = val.optString("name");
+		String manageName = val.optString("manageName");
 		if (StringUtil.isEmpty(name)) {
 			name = type + "-" + port;
+		}
+		if (StringUtil.isEmpty(manageName)) {
+			manageName = "mange-" + port;
 		}
 		config.root = val.optString("root");
 		config.host = val.optString("host");
@@ -284,6 +296,8 @@ public class ServerBoot {
 				s.setKeepAlive(ka);
 			}
 			s.setRoutes(routes);
+			MangeServer ms = new MangeServer(manageName, managetPort, config.root, SERVICE_ACCESSID, SERVICE_ACCESSKEY);
+			ms.start();
 		} else {
 			throw new IllegalArgumentException("不支持的类型" + type);
 		}
