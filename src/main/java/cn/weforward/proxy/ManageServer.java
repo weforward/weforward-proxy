@@ -45,9 +45,10 @@ import cn.weforward.proxy.util.HttpInvoker;
  * @author daibo
  *
  */
-public class MangeServer extends NettyHttpServer implements RestfulService {
+public class ManageServer extends NettyHttpServer implements RestfulService {
+
 	/** 日志 */
-	static final Logger _Logger = LoggerFactory.getLogger(MangeServer.class);
+	static final Logger _Logger = LoggerFactory.getLogger(ManageServer.class);
 
 	protected String m_UserName;
 	protected String m_Password;
@@ -61,7 +62,7 @@ public class MangeServer extends NettyHttpServer implements RestfulService {
 	 * @param port 端口
 	 * @throws Exception 异常
 	 */
-	public MangeServer(String name, int port, String root, String username, String password) throws Exception {
+	public ManageServer(String name, int port, String root, String username, String password) throws Exception {
 		super(port);
 		setName(name);
 		setAcceptThreads(VmStat._cpus);
@@ -118,7 +119,7 @@ public class MangeServer extends NettyHttpServer implements RestfulService {
 		File old = new File(target.getParentFile(), "old");
 		File latest = new File(target.getParentFile(), "latest");
 		File back = new File(target.getParentFile(), "back");
-		if (path.endsWith("/upgrade/")) {
+		if (path.endsWith("/upgrade")) {
 			try {
 				String url = param.get("url");
 				HttpGet get = new HttpGet(url);
@@ -139,7 +140,7 @@ public class MangeServer extends NettyHttpServer implements RestfulService {
 				_Logger.error("升级异常", e);
 				serviceError(response, e.getMessage());
 			}
-		} else if (path.endsWith("/rollback/")) {
+		} else if (path.endsWith("/rollback")) {
 			if (!latest.exists()) {
 				serviceError(response, "不存在latest");
 				return;
@@ -171,6 +172,7 @@ public class MangeServer extends NettyHttpServer implements RestfulService {
 	}
 
 	private void outAndClose(RestfulResponse response, String message) throws IOException {
+		response.setHeader("Content-Type", "text/plain;charset=utf-8");
 		try (OutputStream stream = response.openOutput()) {
 			stream.write(message.getBytes());
 		}

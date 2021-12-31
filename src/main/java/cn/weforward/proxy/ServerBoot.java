@@ -254,7 +254,7 @@ public class ServerBoot {
 			name = type + "-" + port;
 		}
 		if (StringUtil.isEmpty(manageName)) {
-			manageName = "mange-" + port;
+			manageName = "manage-" + port;
 		}
 		config.root = val.optString("root");
 		config.host = val.optString("host");
@@ -296,7 +296,7 @@ public class ServerBoot {
 				s.setKeepAlive(ka);
 			}
 			s.setRoutes(routes);
-			MangeServer ms = new MangeServer(manageName, managetPort, config.root, SERVICE_ACCESSID, SERVICE_ACCESSKEY);
+			ManageServer ms = new ManageServer(manageName, managetPort, config.root, SERVICE_ACCESSID, SERVICE_ACCESSKEY);
 			ms.start();
 		} else {
 			throw new IllegalArgumentException("不支持的类型" + type);
