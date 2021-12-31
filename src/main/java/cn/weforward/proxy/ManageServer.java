@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.concurrent.Executor;
 import java.util.zip.ZipEntry;
@@ -113,6 +114,9 @@ public class ManageServer extends NettyHttpServer implements RestfulService {
 		DictionaryExt<String, String> param = request.getParams();
 		String project = param.get("project");
 		String version = param.get("version");
+		if (StringUtil.isEmpty(version)) {
+			version = "none";
+		}
 		File file = new File(m_Root.getAbsolutePath() + File.separator + project + File.separator + version
 				+ File.separator + "file.zip");
 		File target = file.getParentFile();
@@ -155,6 +159,24 @@ public class ManageServer extends NettyHttpServer implements RestfulService {
 			latest.renameTo(back);
 			old.renameTo(latest);
 			ok(response, "success");
+		} else if (path.endsWith("/remove")) {
+			removeIsExsit(target);
+			ok(response, "success");
+		} else if (path.endsWith("/queryCurrentVersion")) {
+			Path source = Files.readSymbolicLink(latest.toPath());
+			String currentVersion = source.getFileName().toString();
+			ok(response, currentVersion);
+		} else if (path.endsWith("/listVersion")) {
+			String[] arr = target.getParentFile().list();
+			StringBuilder sb = new StringBuilder();
+			if (null != arr && arr.length > 0) {
+				sb.append(arr[0]);
+				for (int i = 1; i < arr.length; i++) {
+					sb.append(';');
+					sb.append(arr[i]);
+				}
+			}
+			ok(response, sb.toString());
 		} else {
 			response.setStatus(RestfulResponse.STATUS_NOT_FOUND);
 			response.openOutput().close();
@@ -246,6 +268,24 @@ public class ManageServer extends NettyHttpServer implements RestfulService {
 			if (null != zip) {
 				zip.close();
 			}
+		}
+	}
+
+	private void removeIsExsit(File target) {
+		if (!target.exists()) {
+			return;
+		}
+		if (target.isDirectory()) {
+			for (File child : target.listFiles()) {
+				if (child.isFile()) {
+					child.delete();
+				} else {
+					removeIsExsit(child);
+				}
+			}
+			target.delete();
+		} else if (target.isFile()) {
+			target.delete();
 		}
 	}
 
