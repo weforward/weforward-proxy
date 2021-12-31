@@ -118,7 +118,7 @@ public class MangeServer extends NettyHttpServer implements RestfulService {
 		File old = new File(target.getParentFile(), "old");
 		File latest = new File(target.getParentFile(), "latest");
 		File back = new File(target.getParentFile(), "back");
-		if (path.startsWith("/upgrade/")) {
+		if (path.endsWith("/upgrade/")) {
 			try {
 				String url = param.get("url");
 				HttpGet get = new HttpGet(url);
@@ -139,7 +139,7 @@ public class MangeServer extends NettyHttpServer implements RestfulService {
 				_Logger.error("升级异常", e);
 				serviceError(response, e.getMessage());
 			}
-		} else if (path.startsWith("/rollback/")) {
+		} else if (path.endsWith("/rollback/")) {
 			if (!latest.exists()) {
 				serviceError(response, "不存在latest");
 				return;
