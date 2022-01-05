@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.concurrent.Executor;
 import java.util.zip.ZipEntry;
@@ -36,6 +37,7 @@ import cn.weforward.common.restful.RestfulResponse;
 import cn.weforward.common.restful.RestfulService;
 import cn.weforward.common.sys.VmStat;
 import cn.weforward.common.util.StringUtil;
+import cn.weforward.common.util.TimeUtil;
 import cn.weforward.protocol.aio.http.RestfulServer;
 import cn.weforward.protocol.aio.netty.NettyHttpServer;
 import cn.weforward.proxy.util.HttpInvoker;
@@ -167,13 +169,13 @@ public class ManageServer extends NettyHttpServer implements RestfulService {
 			String currentVersion = source.getFileName().toString();
 			ok(response, currentVersion);
 		} else if (path.endsWith("/listVersion")) {
-			String[] arr = target.getParentFile().list();
+			File[] arr = target.getParentFile().listFiles();
 			StringBuilder sb = new StringBuilder();
 			if (null != arr && arr.length > 0) {
-				sb.append(arr[0]);
+				sb.append(toString(arr[0]));
 				for (int i = 1; i < arr.length; i++) {
 					sb.append(';');
-					sb.append(arr[i]);
+					sb.append(toString(arr[i]));
 				}
 			}
 			ok(response, sb.toString());
@@ -181,6 +183,10 @@ public class ManageServer extends NettyHttpServer implements RestfulService {
 			response.setStatus(RestfulResponse.STATUS_NOT_FOUND);
 			response.openOutput().close();
 		}
+	}
+
+	private String toString(File file) {
+		return file.getName() + "(" + TimeUtil.formatDateTime(new Date(file.lastModified())) + ")";
 	}
 
 	private void ok(RestfulResponse response, String message) throws IOException {
