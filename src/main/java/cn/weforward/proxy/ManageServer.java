@@ -166,8 +166,8 @@ public class ManageServer extends NettyHttpServer implements RestfulService {
 			ok(response, "success");
 		} else if (path.endsWith("/queryCurrentVersion")) {
 			Path source = Files.readSymbolicLink(latest.toPath());
-			String currentVersion = source.getFileName().toString();
-			ok(response, currentVersion);
+			File currentVersion = source.toFile();
+			ok(response, toString(currentVersion));
 		} else if (path.endsWith("/listVersion")) {
 			File[] arr = target.getParentFile().listFiles();
 			StringBuilder sb = new StringBuilder();
